@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Quiz</title>
+</head>
+<body>
+<h1>Add Quiz Question</h1>
+
+<!-- Optional messages -->
+<p th:if="${param.error}" style="color:red;">You do not have permission to add a quiz.</p>
+<p th:if="${success}" style="color:green;" th:text="${success}"></p>
+
+<form th:action="@{/addQuiz}" th:object="${quiz}" method="post">
+    <!-- CSRF -->
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+    <div>
+        <label>Question Text</label><br/>
+        <input type="text" th:field="*{questionText}" placeholder="Enter question text" required />
+    </div>
+
+    <div>
+        <label>Options (comma-separated)</label><br/>
+        <input type="text" th:field="*{optionsText}" placeholder="A,B,C,D" required />
+        <small>Example: Paris,London,Rome,Berlin</small>
+    </div>
+
+    <div>
+        <label>Correct Answer (must match one option exactly)</label><br/>
+        <input type="text" th:field="*{correctAnswer}" placeholder="Enter correct answer" required />
+    </div>
+
+    <div style="margin-top:12px;">
+        <button type="submit">Add</button>
+        <a th:href="@{/home}">Cancel</a>
+    </div>
+</form>
+
+<hr/>
+
+<form th:action="@{/logout}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <button type="submit">Logout</button>
+</form>
+</body>
+</html>
