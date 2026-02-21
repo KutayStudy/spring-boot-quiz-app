@@ -1,5 +1,6 @@
 package com.example.quizapplication.service;
 
+import com.example.quizapplication.exception.UserAlreadyExistsException;
 import com.example.quizapplication.model.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -38,5 +39,12 @@ public class QuizUserDetailsService implements UserDetailsService {
                 .password(user.getPassword())
                 .roles(user.getRole())
                 .build();
+    }
+
+    public void validateUsername(String username) {
+        User user = userHashMap.get(username);
+        if (user != null) {
+            throw new UserAlreadyExistsException("Username already exists");
+        }
     }
 }

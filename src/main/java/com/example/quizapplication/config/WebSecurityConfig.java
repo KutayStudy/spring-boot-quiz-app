@@ -30,6 +30,8 @@ public class WebSecurityConfig {
 
                         .requestMatchers("/home").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
+                ).exceptionHandling(exception -> exception
+                        .accessDeniedPage("/home")   // redirect buraya
                 )
                 .formLogin(form -> form
                         .loginPage("/login")

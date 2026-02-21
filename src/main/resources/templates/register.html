@@ -80,8 +80,8 @@
         <button type="submit">Register</button>
     </form>
     <!-- Error Message -->
-    <div th:if="${param.error}" class="error">
-        Invalid username.
+    <div th:if="${param.error}">
+        <p style="color:red" th:text="${param.error}"></p>
     </div>
 
     <p>Already have an account? <a href="/login">Login here</a></p>

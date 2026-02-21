@@ -1,5 +1,6 @@
 package com.example.quizapplication.controller;
 
+import com.example.quizapplication.exception.UserAlreadyExistsException;
 import com.example.quizapplication.model.Question;
 import com.example.quizapplication.service.QuestionsService;
 import com.example.quizapplication.service.QuizUserDetailsService;
@@ -11,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +42,7 @@ public class QuizController {
     @GetMapping("/quiz")
     public String quiz(Model model) {
         model.addAttribute("quizzes", questionsService.loadQuizzes());
-        return "Quiz";
+        return "quiz";
     }
 
     @GetMapping("/home")
@@ -65,19 +67,30 @@ public class QuizController {
     public String registerUser(@RequestParam String username,
                                @RequestParam String email,
                                @RequestParam String password,
-                               @RequestParam String role) {
+                               @RequestParam String role,
+                               RedirectAttributes redirectAttributes) {
+
         try {
+            userDetailsService.validateUsername(username);
             userDetailsService.registerUser(username, email, password, role);
+
+        } catch (UserAlreadyExistsException e) {
+
+            redirectAttributes.addAttribute("error", e.getMessage());
+            return "redirect:/register";
+
         } catch (Exception e) {
-            return "redirect:/register?error";
+
+            redirectAttributes.addAttribute("error", "Unexpected error occurred");
+            return "redirect:/register";
         }
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password)
         );
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Auto-login yaptıysan login'e değil home'a gitmek daha tutarlı
         return "redirect:/home";
     }
 
